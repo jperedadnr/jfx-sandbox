@@ -57,7 +57,6 @@ public class HeadlessRobot extends GlassRobot {
         Application.checkEventThread();
         MouseState state = new MouseState();
         MouseInput.getInstance().getState(state);
-        System.out.println("old state = " + state);
         state.setX((int) x);
         state.setY((int) y);
         MouseInput.getInstance().setState(state, false);
