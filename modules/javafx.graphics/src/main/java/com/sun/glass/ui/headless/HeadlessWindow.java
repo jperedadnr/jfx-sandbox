@@ -9,8 +9,9 @@ import com.sun.glass.ui.Window;
 
 public class HeadlessWindow extends Window {
 
-    private int minWidth, maxWidth;
-    private int minHeight, maxHeight;
+    private int id;
+    private int minWidth, maxWidth = -1;
+    private int minHeight, maxHeight = -1;
 
     public HeadlessWindow(Window owner, Screen screen, int styleMask) {
         super(owner, screen, styleMask);
@@ -18,16 +19,25 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected long _createWindow(long ownerPtr, long screenPtr, int mask) {
-        return 1;
+        id = HeadlessWindowManager.getInstance().addWindow(this);
+        return id;
     }
 
     @Override
     protected boolean _close(long ptr) {
-        return true;
+        return HeadlessWindowManager.getInstance().closeWindow(this);
     }
 
     @Override
     protected boolean _setView(long ptr, View view) {
+        if (view != null) {
+            // the system assumes a resize notification to set the View
+            // sizes and to get the Scene to layout correctly.
+            ((HeadlessView) view).notifyResize(getWidth(), getHeight());
+        } else {
+            // if view is null, the Window has to be closed
+            HeadlessWindowManager.getInstance().closeWindow(this);
+        }
         return true;
     }
 
@@ -42,18 +52,18 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _minimize(long ptr, boolean minimize) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected boolean _maximize(long ptr, boolean maximize, boolean wasMaximized) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected void _setBounds(long ptr, int x, int y, boolean xSet, boolean ySet, int w, int h, int cw, int ch, float xGravity, float yGravity) {
-        int newWidth = 0;
-        int newHeight = 0;
+        int newWidth;
+        int newHeight;
         if (w > 0) {
             //window newWidth surpass window content newWidth (cw)
             newWidth = w;
@@ -118,7 +128,7 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _requestFocus(long ptr, int event) {
-        return true;
+        return HeadlessWindowManager.getInstance().requestFocus(this);
     }
 
     @Override
@@ -127,12 +137,29 @@ public class HeadlessWindow extends Window {
 
     @Override
     protected boolean _grabFocus(long ptr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return HeadlessWindowManager.getInstance().grabFocus(this);
     }
 
     @Override
     protected void _ungrabFocus(long ptr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        HeadlessWindowManager.getInstance().ungrabFocus(this);
+    }
+
+    @Override
+    protected void notifyFocus(int event) {
+        super.notifyFocus(event);
+    }
+
+    @Override
+    protected void notifyClose() {
+        super.notifyClose();
+        close();
+    }
+
+    @Override
+    protected void notifyDestroy() {
+        super.notifyDestroy();
+        HeadlessWindowManager.getInstance().repaintAll();
     }
 
     @Override
@@ -187,34 +214,38 @@ public class HeadlessWindow extends Window {
     protected void _toBack(long ptr) {
     }
 
+    void _notifyFocusDisabled() {
+        notifyFocusDisabled();
+    }
+
     @Override
     protected void _enterModal(long ptr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected void _enterModalWithWindow(long dialog, long window) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected void _exitModal(long ptr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected void _requestInput(long ptr, String text, int type, double width, double height, double Mxx, double Mxy, double Mxz, double Mxt, double Myx, double Myy, double Myz, double Myt, double Mzx, double Mzy, double Mzz, double Mzt) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected void _releaseInput(long ptr) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public long getNativeWindow() {
-        return 0;
+        return id;
     }
 
 }

@@ -10,21 +10,6 @@ import javafx.scene.paint.Color;
 
 public class HeadlessRobot extends GlassRobot {
 
-    private final HeadlessApplication application;
-    private final MouseInput mouseInput;
-
-    private HeadlessWindow window;
-    private NestedRunnableProcessor processor;
-
-    private double mouseX, mouseY;
-    private int modifiers;
-
-    public HeadlessRobot(HeadlessApplication application, HeadlessWindow window) {
-        this.application = application;
-        this.mouseInput = new MouseInput(application, window);
-        this.window = window;
-    }
-
     @Override
     public void create() {
     }
@@ -35,49 +20,63 @@ public class HeadlessRobot extends GlassRobot {
 
     @Override
     public void keyPress(KeyCode keyCode) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Application.checkEventThread();
+        KeyState state = new KeyState();
+        KeyInput.getInstance().getState(state);
+        state.pressKey(keyCode.getCode());
+        KeyInput.getInstance().setState(state);
     }
 
     @Override
     public void keyRelease(KeyCode keyCode) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        Application.checkEventThread();
+        KeyState state = new KeyState();
+        KeyInput.getInstance().getState(state);
+        state.releaseKey(keyCode.getCode());
+        KeyInput.getInstance().setState(state);
     }
 
     @Override
     public double getMouseX() {
-        return this.mouseX;
+        Application.checkEventThread();
+        MouseState state = new MouseState();
+        MouseInput.getInstance().getState(state);
+        return state.getX();
     }
 
     @Override
     public double getMouseY() {
-        return this.mouseY;
+        Application.checkEventThread();
+        MouseState state = new MouseState();
+        MouseInput.getInstance().getState(state);
+        return state.getY();
     }
 
     @Override
     public void mouseMove(double x, double y) {
-        this.mouseX = mouseX + x;
-        this.mouseY = mouseY + y;
+        Application.checkEventThread();
         MouseState state = new MouseState();
-        mouseInput.getState(state);
+        MouseInput.getInstance().getState(state);
+        System.out.println("old state = " + state);
         state.setX((int) x);
         state.setY((int) y);
-        mouseInput.setState(state, false);
+        MouseInput.getInstance().setState(state, false);
     }
 
     @Override
     public void mousePress(MouseButton... buttons) {
         Application.checkEventThread();
         MouseState state = new MouseState();
-        mouseInput.getState(state);
-        mouseInput.setState(convertToMouseState(true, state, buttons), false);
+        MouseInput.getInstance().getState(state);
+        MouseInput.getInstance().setState(convertToMouseState(true, state, buttons), false);
     }
 
     @Override
     public void mouseRelease(MouseButton... buttons) {
         Application.checkEventThread();
         MouseState state = new MouseState();
-        mouseInput.getState(state);
-        mouseInput.setState(convertToMouseState(false, state, buttons), false);
+        MouseInput.getInstance().getState(state);
+        MouseInput.getInstance().setState(convertToMouseState(false, state, buttons), false);
     }
 
     @Override
@@ -154,7 +153,7 @@ public class HeadlessRobot extends GlassRobot {
                     break;
                 default:
                     throw new IllegalArgumentException("MouseButton: " + button
-                            + " not supported by Monocle Robot");
+                            + " not supported by Headless Robot");
             }
         }
         return state;

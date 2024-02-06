@@ -2,6 +2,7 @@ package com.sun.glass.ui.headless;
 
 import com.sun.glass.ui.Pixels;
 import com.sun.glass.ui.View;
+
 import java.util.Map;
 
 public class HeadlessView extends View {
@@ -33,6 +34,10 @@ public class HeadlessView extends View {
     @Override
     protected void notifyResize(int width, int height) {
         super.notifyResize(width, height);
+    }
+
+    void notifyRepaint() {
+        super.notifyRepaint(0, 0, getWidth(), getHeight());
     }
 
     @Override
@@ -74,6 +79,12 @@ public class HeadlessView extends View {
     @Override
     protected void _exitFullscreen(long ptr, boolean animate) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    protected void notifyKey(int type, int keyCode, char[] keyChars,
+                             int modifiers) {
+        super.notifyKey(type, keyCode, keyChars, modifiers);
     }
 
     @Override

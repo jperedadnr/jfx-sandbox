@@ -12,10 +12,13 @@ import java.util.BitSet;
  */
 class MouseInput {
 
-    private final HeadlessApplication application;
-    private final HeadlessWindow window;
-    private MouseState state = new MouseState();
-    private IntSet buttons = new IntSet();
+    private static final MouseInput instance = new MouseInput();
+    static MouseInput getInstance() {
+        return instance;
+    }
+
+    private final MouseState state = new MouseState();
+    private final IntSet buttons = new IntSet();
 
     /** Are we currently processing drag and drop? */
     private boolean dragInProgress = false;
@@ -24,16 +27,11 @@ class MouseInput {
     /** On what View is the drag operation currently over? */
     private HeadlessView dragView = null;
     /** What drag actions have been performed? */
-    private BitSet dragActions = new BitSet();
+    private final BitSet dragActions = new BitSet();
     private static final int DRAG_ENTER = 1;
     private static final int DRAG_LEAVE = 2;
     private static final int DRAG_OVER = 3;
     private static final int DRAG_DROP = 4;
-
-    MouseInput (HeadlessApplication application, HeadlessWindow window) {
-        this.application = application;
-        this.window = window;
-    }
 
     /** Retrieves the current state of mouse buttons and of the cursor.
      *
@@ -57,9 +55,36 @@ class MouseInput {
     void setState(MouseState newState, boolean synthesized) {
         int x = newState.getX();
         int y = newState.getY();
-        boolean newAbsoluteLocation = state.getX() != x || state.getY() != y;
-        HeadlessView view = (HeadlessView) window.getView();
-
+        HeadlessWindow oldWindow = state.getWindow(false, null);
+        HeadlessWindow window = newState.getWindow(newState.getButtonsPressed().isEmpty(), null);
+        HeadlessView view = window == null ? null : (HeadlessView) window.getView();
+        if (oldWindow != window && oldWindow != null) {
+            if (!oldWindow.isEnabled()) {
+                HeadlessApplication.getInstance().getProcessor().runLater(() ->
+                        HeadlessWindowManager.getInstance().notifyFocusDisabled(oldWindow));
+            } else {
+                HeadlessView oldView = (HeadlessView) oldWindow.getView();
+                if (oldView != null) {
+                    // send exit event
+                    KeyState keyState = new KeyState();
+                    KeyInput.getInstance().getState(keyState);
+                    int modifiers = state.getModifiers() | keyState.getModifiers();
+                    int button = state.getButton();
+                    boolean isPopupTrigger = false; // TODO
+                    int oldX = state.getX();
+                    int oldY = state.getY();
+                    int oldRelX = oldX - oldWindow.getX();
+                    int oldRelY = oldY - oldWindow.getY();
+                    try {
+                        postMouseEvent(oldView, MouseEvent.EXIT, button,
+                                oldRelX, oldRelY, oldX, oldY,
+                                modifiers, isPopupTrigger, synthesized);
+                    } catch (RuntimeException e) {
+                        Application.reportException(e);
+                    }
+                }
+            }
+        }
         if (view == null) {
             newState.copyTo(state);
             return;
@@ -116,7 +141,7 @@ class MouseInput {
             }
             if (dY != 0.0) {
                 int modifiers = newState.getModifiers();
-                application.getProcessor().runLater(() -> {
+                HeadlessApplication.getInstance().getProcessor().runLater(() -> {
                     view.notifyScroll(relX, relY, x, y, 0.0, dY,
                                       modifiers, 1, 0, 0, 0, 1.0, 1.0);
 
@@ -130,7 +155,7 @@ class MouseInput {
     private void postMouseEvent(HeadlessView view, int eventType, int button,
                                 int relX, int relY, int x, int y,
                                 int modifiers, boolean isPopupTrigger, boolean synthesized) {
-        application.getProcessor().runLater(() -> {
+        HeadlessApplication.getInstance().getProcessor().runLater(() -> {
             notifyMouse(view, eventType, button,
                         relX, relY, x, y,
                         modifiers, isPopupTrigger, synthesized);

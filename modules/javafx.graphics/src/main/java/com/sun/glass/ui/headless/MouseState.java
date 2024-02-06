@@ -66,7 +66,13 @@ class MouseState {
      * current window is null or no window can be found for the supplied coordinates.
      */
     HeadlessWindow getWindow(boolean recalculateCache, HeadlessWindow fallback) {
-        return fallback;
+        if (recalculateCache) {
+            window = HeadlessWindowManager.getInstance().getWindowForLocation(x, y);
+        }
+        if (window == null) {
+            window = fallback;
+        }
+        return window;
     }
 
     /** Returns the Glass button ID used for this state. */

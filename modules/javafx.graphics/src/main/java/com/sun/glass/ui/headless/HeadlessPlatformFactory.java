@@ -14,27 +14,27 @@ public class HeadlessPlatformFactory extends PlatformFactory {
 
     @Override
     public Application createApplication() {
-        return new HeadlessApplication();
+        return HeadlessApplication.getInstance();
     }
 
     @Override
     public MenuBarDelegate createMenuBarDelegate(MenuBar menubar) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public MenuDelegate createMenuDelegate(Menu menu) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public MenuItemDelegate createMenuItemDelegate(MenuItem menuItem) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     public ClipboardDelegate createClipboardDelegate() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
 }

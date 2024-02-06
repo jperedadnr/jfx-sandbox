@@ -49,6 +49,15 @@ class KeyState {
         return keysPressed;
     }
 
+
+    /** Returns the Glass window on which this event state is located . */
+    HeadlessWindow getWindow(boolean recalculateCache) {
+        if (window == null || recalculateCache) {
+            window = HeadlessWindowManager.getInstance().getFocusedWindow();
+        }
+        return window;
+    }
+
     private static int getModifier(int virtualKeyCode) {
         switch (virtualKeyCode) {
             case KeyEvent.VK_SHIFT: return KeyEvent.MODIFIER_SHIFT;

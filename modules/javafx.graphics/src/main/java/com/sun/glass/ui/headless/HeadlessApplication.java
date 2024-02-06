@@ -16,7 +16,16 @@ import java.nio.IntBuffer;
 
 public class HeadlessApplication extends Application {
 
-    private NestedRunnableProcessor processor = new NestedRunnableProcessor();
+    private static HeadlessApplication instance;
+
+    static HeadlessApplication getInstance() {
+        if (instance == null) {
+             instance = new HeadlessApplication();
+        }
+        return instance;
+    }
+
+    private final NestedRunnableProcessor processor = new NestedRunnableProcessor();
     private Window window;
     private HeadlessCursor cursor;
 
@@ -38,7 +47,7 @@ public class HeadlessApplication extends Application {
 
     @Override
     protected void _invokeAndWait(Runnable runnable) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -48,12 +57,12 @@ public class HeadlessApplication extends Application {
 
     @Override
     protected Object _enterNestedEventLoop() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected void _leaveNestedEventLoop(Object retValue) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -79,17 +88,17 @@ public class HeadlessApplication extends Application {
 
     @Override
     public Cursor createCursor(int x, int y, Pixels pixels) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected void staticCursor_setVisible(boolean visible) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected Size staticCursor_getBestSize(int width, int height) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -119,7 +128,7 @@ public class HeadlessApplication extends Application {
 
     @Override
     public GlassRobot createRobot() {
-        return new HeadlessRobot(this, (HeadlessWindow) this.window);
+        return new HeadlessRobot();
     }
 
     @Override
@@ -130,9 +139,7 @@ public class HeadlessApplication extends Application {
     @Override
     protected Screen[] staticScreen_getScreens() {
         Screen screen = new Screen(0, 32, 0, 0, 1000, 1000, 0, 0, 1000, 1000, 0, 0, 1000, 1000, 100, 100, 1f, 1f, 1f, 1f);
-        Screen[] answer = new Screen[1];
-        answer[0] = screen;
-        return answer;
+        return new Screen[] {screen};
     }
 
     @Override
@@ -152,12 +159,12 @@ public class HeadlessApplication extends Application {
 
     @Override
     protected CommonDialogs.FileChooserResult staticCommonDialogs_showFileChooser(Window owner, String folder, String filename, String title, int type, boolean multipleMode, CommonDialogs.ExtensionFilter[] extensionFilters, int defaultFilterIndex) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
     protected File staticCommonDialogs_showFolderChooser(Window owner, String folder, String title) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
@@ -187,7 +194,7 @@ public class HeadlessApplication extends Application {
 
     @Override
     protected int _getKeyCodeForChar(char c) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
