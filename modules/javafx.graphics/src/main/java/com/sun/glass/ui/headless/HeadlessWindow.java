@@ -34,9 +34,6 @@ public class HeadlessWindow extends Window {
             // the system assumes a resize notification to set the View
             // sizes and to get the Scene to layout correctly.
             ((HeadlessView) view).notifyResize(getWidth(), getHeight());
-        } else {
-            // if view is null, the Window has to be closed
-            HeadlessWindowManager.getInstance().closeWindow(this);
         }
         return true;
     }
