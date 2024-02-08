@@ -34,7 +34,7 @@ public class HeadlessPlatformFactory extends PlatformFactory {
 
     @Override
     public ClipboardDelegate createClipboardDelegate() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return new HeadlessClipboardDelegate();
     }
 
 }
