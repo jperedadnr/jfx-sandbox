@@ -1,6 +1,7 @@
 package com.sun.glass.ui.headless;
 
 import com.sun.glass.ui.Application;
+
 import java.util.LinkedList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CountDownLatch;
@@ -54,6 +55,20 @@ public class NestedRunnableProcessor implements Runnable {
         }
 
         return entry.returnValue;
+    }
+
+    Object enterNestedEventLoop() {
+        /// start our nested loop, which will block until that exits
+        Object result = newRunLoop();
+        // and return the value that was passed into leaveNested
+        return result;
+    }
+
+    void leaveNestedEventLoop(Object retValue) {
+        RunLoopEntry current = activeRunLoops.pop();
+        assert current != null;
+        current.active = false;
+        current.returnValue = retValue;
     }
 
     private static class RunLoopEntry {

@@ -47,7 +47,7 @@ public class HeadlessApplication extends Application {
 
     @Override
     protected void _invokeAndWait(Runnable runnable) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        processor.invokeAndWait(runnable);
     }
 
     @Override
@@ -57,12 +57,12 @@ public class HeadlessApplication extends Application {
 
     @Override
     protected Object _enterNestedEventLoop() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return processor.enterNestedEventLoop();
     }
 
     @Override
     protected void _leaveNestedEventLoop(Object retValue) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        processor.leaveNestedEventLoop(retValue);
     }
 
     @Override
@@ -190,6 +190,14 @@ public class HeadlessApplication extends Application {
     @Override
     protected boolean _supportsUnifiedWindows() {
         return false;
+    }
+
+    void enterDnDEventLoop() {
+        _enterNestedEventLoop();
+    }
+
+    void leaveDndEventLoop() {
+        _leaveNestedEventLoop(null);
     }
 
     @Override

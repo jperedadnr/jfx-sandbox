@@ -85,6 +85,7 @@ class MouseInput {
                 }
             }
         }
+        boolean newAbsoluteLocation = state.getX() != x || state.getY() != y;
         if (view == null) {
             newState.copyTo(state);
             return;
@@ -92,6 +93,33 @@ class MouseInput {
 
         int relX = x - window.getX();
         int relY = y - window.getY();
+
+        // send enter event
+        if (oldWindow != window) {
+            KeyState keyState = new KeyState();
+            KeyInput.getInstance().getState(keyState);
+            int modifiers = state.getModifiers() | keyState.getModifiers();
+            int button = state.getButton();
+            boolean isPopupTrigger = false; // TODO
+            postMouseEvent(view, MouseEvent.ENTER, button,
+                    relX, relY, x, y,
+                    modifiers, isPopupTrigger, synthesized);
+        }
+
+        // send motion events
+        if (oldWindow != window | newAbsoluteLocation) {
+            boolean isDrag = !state.getButtonsPressed().isEmpty();
+            int eventType = isDrag ? MouseEvent.DRAG : MouseEvent.MOVE;
+            KeyState keyState = new KeyState();
+            KeyInput.getInstance().getState(keyState);
+            int modifiers = state.getModifiers() | keyState.getModifiers();
+            int button = state.getButton();
+            boolean isPopupTrigger = false; // TODO
+            postMouseEvent(view, eventType, button,
+                    relX, relY, x, y,
+                    modifiers, isPopupTrigger, synthesized);
+        }
+        
         // send press events
         newState.getButtonsPressed().difference(buttons, state.getButtonsPressed());
         if (!buttons.isEmpty()) {
